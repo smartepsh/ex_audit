@@ -63,6 +63,8 @@ defmodule ExAudit.Tracking do
     now = DateTime.utc_now()
     empty_version_schema = struct(version_schema(), %{})
 
+    repo_module = Application.get_env(:ex_audit, :version_repo, module)
+
     custom_fields =
       Keyword.get(opts, :ex_audit_custom, [])
       |> Enum.into(%{})
@@ -85,7 +87,7 @@ defmodule ExAudit.Tracking do
 
       _ ->
         opts = Keyword.drop(opts, [:on_conflict, :conflict_target])
-        module.insert_all(version_schema(), changes, opts)
+        repo_module.insert_all(version_schema(), changes, opts)
     end
   end
 
