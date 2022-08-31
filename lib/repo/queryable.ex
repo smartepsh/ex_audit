@@ -8,11 +8,11 @@ defmodule ExAudit.Queryable do
   @compile {:inline, version_schema: 0}
 
   def update_all(module, queryable, updates, opts) do
-    Ecto.Repo.Queryable.update_all(module, queryable, updates, opts)
+    Ecto.Repo.Queryable.update_all(module, queryable, updates, {Ecto.Repo.Registry.lookup(module), opts})
   end
 
   def delete_all(module, queryable, opts) do
-    Ecto.Repo.Queryable.delete_all(module, queryable, opts)
+    Ecto.Repo.Queryable.delete_all(module, queryable,{Ecto.Repo.Registry.lookup(module), opts})
   end
 
   def history(module, struct, opts) do
@@ -40,7 +40,7 @@ defmodule ExAudit.Queryable do
           )
       end
 
-    versions = Ecto.Repo.Queryable.all(module, query, opts)
+    versions = Ecto.Repo.Queryable.all(module, query, {Ecto.Repo.Registry.lookup(module), opts})
 
     if Keyword.get(opts, :render_struct, false) do
       {versions, oldest_struct} =
